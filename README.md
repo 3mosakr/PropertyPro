@@ -1,6 +1,6 @@
 # PropertyPro
 
-##Real Estate Marketing Application (API)
+## Real Estate Marketing Application (API)
 
 - Developed a .NET Core application for marketing real estate units.
 - Utilized Entity Framework Core for data access and SQL Server as the database.
