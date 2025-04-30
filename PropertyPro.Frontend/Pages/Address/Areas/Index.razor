@@ -1,0 +1,99 @@
+﻿@page "/Address/Area"
+
+
+<PageTitle>Areas</PageTitle>
+
+<h1>Areas</h1>
+<a class="btn btn-primary" href="/Address/Area/Create">New Area</a>
+
+@if (areas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>City id</th>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var area in areas)
+            {
+                <tr>
+                    <td>@area.Id</td>
+                    <td>@area.CityId</td>
+                    <td>@area.AreaName</td>
+                    <td>
+                        <a class="btn btn-danger btn-sm" href="/Address/Area/Delete/@area.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@inject IAddressService AddressService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+@code {
+    private List<Area> areas;
+    private string token;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the token from localStorage
+        token = await GetTokenAsync();
+
+        // If no token found, redirect to login
+        if (string.IsNullOrEmpty(token))
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        // Fetch cities with token
+        await LoadAreasAsync();
+    }
+
+    private async Task<string> GetTokenAsync()
+    {
+        try
+        {
+            return await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting token: {ex.Message}");
+            return null;
+        }
+    }
+
+    private async Task LoadAreasAsync()
+    {
+        try
+        {
+
+            var response = await AddressService.GetAreasListAsync();
+
+            if (response?.Data != null)
+            {
+                areas = response.Data;
+            }
+            else
+            {
+                Console.WriteLine("Error: No data found in response.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading Areas: {ex.Message}");
+        }
+    }
+}

@@ -18,7 +18,7 @@ namespace PropertyPro.Service.Abstract
 
         #endregion
 
-        #region UserType
+        #region SaleType
         Task<ResponseModel<SaleType>> GetSaleTypesListAsync();
         Task<ResponseModel<SaleType>> AddSaleTypeAsync(string Type);
         Task<ResponseModel<SaleType>> DeleteSaleTypeAsync(int id);

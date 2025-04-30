@@ -12,5 +12,9 @@ namespace PropertyPro.Service.Abstract
     {
         public Task<ResponseModel<AuthModel>> RegisterAsync(RegisterDto model);
         public Task<ResponseModel<AuthModel>> LoginAsync(LoginDto model);
+
+        public Task<string> ForgotPasswordAsync(string email);
+        public Task<string> ChangePasswordAsync(ChangePasswordDto model);   
+        Task<string> AddRoleAsync(AddRoleModel roleName);
     }
 }

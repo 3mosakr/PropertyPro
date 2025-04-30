@@ -1,0 +1,98 @@
+﻿@page "/Address/City"
+
+<PageTitle>Cites</PageTitle>
+
+<h1>Cites</h1>
+<a class="btn btn-primary" href="/Address/City/Create">New City</a>
+
+@if (cities == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Governorate id</th>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var city in cities)
+            {
+                <tr>
+                    <td>@city.Id</td>
+                    <td>@city.GovernorateId</td>
+                    <td>@city.CityName</td>
+                    <td>
+                        <a class="btn btn-danger btn-sm" href="/Address/City/Delete/@city.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@inject IAddressService AddressService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+@code {
+    private List<City> cities;
+    private string token;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the token from localStorage
+        token = await GetTokenAsync();
+
+        // If no token found, redirect to login
+        if (string.IsNullOrEmpty(token))
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        // Fetch cities with token
+        await LoadcitiesAsync();
+    }
+
+    private async Task<string> GetTokenAsync()
+    {
+        try
+        {
+            return await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting token: {ex.Message}");
+            return null;
+        }
+    }
+
+    private async Task LoadcitiesAsync()
+    {
+        try
+        {
+
+            var response = await AddressService.GetCitiesListAsync();
+
+            if (response?.Data != null)
+            {
+                cities = response.Data;
+            }
+            else
+            {
+                Console.WriteLine("Error: No data found in response.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading Cities: {ex.Message}");
+        }
+    }
+}

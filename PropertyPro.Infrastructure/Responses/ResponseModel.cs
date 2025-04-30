@@ -15,7 +15,7 @@ namespace PropertyPro.Infrastructure.Responses
         public string? Message { get; set; }
 
         /// Data and Errors
-        public List<T> Data { get; set; }
+        public List<T>? Data { get; set; }
         public List<string>? Errors { get; set; }
 
         // Constructor(s)

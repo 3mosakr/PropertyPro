@@ -1,0 +1,32 @@
+﻿@using PropertyPro.Frontend.Auth
+@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            @* <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a> *@
+            <button class="btn btn-primary" @onclick="Logout">Logout</button>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@code
+{
+    private async Task Logout()
+    {
+        var authProvider = (CustomAuthenticationStateProvider)AuthenticationStateProvider;
+        await authProvider.MarkUserAsLoggedOut();
+        Navigation.NavigateTo("/login");
+    }
+}

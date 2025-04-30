@@ -1,0 +1,516 @@
+﻿@page "/Units/Create"
+
+<h3>Create Unit</h3>
+
+<EditForm Model="this" OnValidSubmit="CreateUnit">
+
+	<div class="row">
+
+		<div class="col-lg-8">
+			<h1 class="mb-5">New Unit</h1>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Title</label>
+				<div class="col-md-8">
+					@* <input class="form-control" @bind="UnitDto.Title" required /> *@
+					<InputText @bind-Value="UnitDto.Title" class="form-control" required />
+
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Description</label>
+				<div class="col-md-8">
+					<textarea class="form-control" @bind="UnitDto.Description"  required></textarea> 
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Category</label>
+				<div class="col-md-8">
+					<InputSelect class="form-control" @bind-Value="UnitDto.CategoryId" required>
+						<option selected hidden> -- select Category -- </option>
+						@foreach (var category in Categories)
+						{
+							<option value="@category.Id">@category.CategoryName</option>
+						}
+					</InputSelect>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Unit Type</label>
+				<div class="col-md-8">
+					<InputSelect class="form-control" @bind-Value="UnitDto.UnitTypeId" required>
+						<option selected hidden> -- select Unit Type -- </option>
+						@foreach (var unitType in UnitTypes)
+						{
+							<option value="@unitType.Id">@unitType.TypeName</option>
+						}
+					</InputSelect>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Sale Type</label>
+				<div class="col-md-8">
+					<InputSelect class="form-control" @bind-Value="UnitDto.SaleTypeId" required>
+						<option selected hidden> -- select Sale Type -- </option>
+						@foreach (var saleType in SaleTypes)
+						{
+							<option value="@saleType.Id">@saleType.Name</option>
+						}
+					</InputSelect>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Price</label>
+				<div class="col-md-8">
+					<input type="number" class="form-control" @bind="UnitDto.Price" required />
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Unit Area</label>
+				<div class="col-md-8">
+					<input type="number" class="form-control" @bind="UnitDto.UnitArea" required />
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Number of Bedrooms</label>
+				<div class="col-md-8">
+					<input type="number" class="form-control" @bind="UnitDto.NumberOfBedrooms" required />
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Number of Bathrooms</label>
+				<div class="col-md-8">
+					<input type="number" class="form-control" @bind="UnitDto.NumberOfBathrooms" required />
+				</div>
+			</div>
+
+			<!-- Address -->
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Governorate</label>
+				<div class="col-md-8">
+					<InputSelect class="form-control" @bind-Value="UnitDto.GovernorateId" @bind-Value:after="GetCities">
+						<option selected hidden> -- select Governorate -- </option>
+						@foreach (var governorate in Governorates)
+						{
+							<option value="@governorate.Id">@governorate.GovernorateName</option>
+						}
+					</InputSelect>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">City</label>
+				<div class="col-md-8">
+					<InputSelect class="form-control" @bind-Value="UnitDto.CityId" @bind-Value:after="GetAreas">
+						<option selected hidden> -- select City -- </option>
+						@foreach (var city in Cities)
+						{
+							<option value="@city.Id">@city.CityName</option>
+						}
+					</InputSelect>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Area</label>
+				<div class="col-md-8">
+					<InputSelect class="form-control" @bind-Value="UnitDto.AreaId" required>
+						<option selected hidden> -- select Area -- </option>
+						@foreach (var area in Areas)
+						{
+							<option value="@area.Id">@area.AreaName</option>
+						}
+					</InputSelect>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Compound Name</label>
+				<div class="col-md-8">
+					<input class="form-control" @bind="UnitDto.CompoundName" />
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Street Name</label>
+				<div class="col-md-8">
+					<input class="form-control" @bind="UnitDto.StreetName" />
+				</div>
+			</div>
+
+			@* <div class="row mb-3"> *@
+			@* 	<label class="col-md-4 col-form-label">User Id</label> *@
+			@* 	<div class="col-md-8"> *@
+			@* 		<input type="number" class="form-control" @bind="UnitDto.UserId" required /> *@
+			@* 	</div> *@
+			@* </div> *@
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Resourse Link</label>
+				<div class="col-md-8">
+					<input class="form-control" @bind="UnitDto.ResourceLink"  />
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Developer Portfolio</label>
+				<div class="col-md-8">
+					<input class="form-control" @bind="UnitDto.DeveloperPortfolio"  />
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Unit Images (Max Size: 5 MB)</label>
+				<div class="col-md-8 file-drop-zone @HoverClass"
+				@ref="fileDropContainer"
+				@ondragenter="OnDragEnter"
+				@ondragleave="OnDragLeave" @ondragover="OnDragEnter">
+					<InputFile @ref="inputFile" OnChange="HandleFileSelected" multiple required />
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Preview</label>
+				<div class="col-md-8">
+					@for (int i = 0; i < uploadedImages.Count; i++)
+					{
+						var index = i;
+						<div class="d-inline-block m-2 text-center">
+							<img src="@uploadedImages[i].PreviewUrl" width="100" class="img-thumbnail" />
+							<button type="button" class="btn btn-sm btn-danger mt-1" @onclick="() => RemoveImage(index)">
+								<i class="bi bi-trash-fill"></i>
+							</button>
+						</div>
+					}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="offset-md-4 col-md-4 d-grid">
+					<button class="btn btn-primary" type="submit">Create</button>
+				</div>
+				<div class="col-md-4 d-grid">
+					<a class="btn btn-secondary" href="/Units">Back</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</EditForm>
+
+
+@inject IUnitService UnitService
+@inject ICategotyService CategoryService
+@inject ITypesService TypesService
+@inject IAddressService AddressService
+@inject NavigationManager navigationManager
+@inject IJSRuntime JSRuntime;
+@implements IAsyncDisposable
+
+@code {
+	class UploadedImage
+	{
+		public string PreviewUrl { get; set; } = string.Empty;
+		public string FileName { get; set; } = string.Empty;
+		public string ContentType { get; set; } = string.Empty;
+		public byte[] Content { get; set; } = Array.Empty<byte>();
+	}
+
+	public AddUnitDto UnitDto { get; set; } = new AddUnitDto();
+
+	public List<Category> Categories { get; set; } = new List<Category>();
+	public List<UnitType> UnitTypes { get; set; } = new List<UnitType>();
+	public List<SaleType> SaleTypes { get; set; } = new List<SaleType>();
+	public List<Governorate> Governorates { get; set; } = new List<Governorate>();
+	public List<City> Cities { get; set; } = new List<City>();
+	public List<Area> Areas { get; set; } = new List<Area>();
+
+	private List<UploadedImage> uploadedImages = new();
+	private List<string> imagePreviews = new();
+
+	// drag & drop and paste
+	private const int maxAllowedSize = 5 * 1024 * 1024; // 5 MB
+	private string HoverClass = string.Empty;
+	private ElementReference fileDropContainer;
+	InputFile? inputFile;
+
+	IJSObjectReference? _filePasteModule;
+	IJSObjectReference? _filePasteFunctionReference;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		await GetCategoriesAsync();
+		await GetUnitsType();
+		await GetSaleTypes();
+		await GetGovernorate();
+	}
+	// ================================================================================ 
+
+	private async Task HandleFileSelected(InputFileChangeEventArgs e)
+	{
+		foreach (var file in e.GetMultipleFiles())
+		{
+			if (!uploadedImages.Any(f => f.FileName == file.Name))
+			{
+				using var stream = file.OpenReadStream(maxAllowedSize);
+				using var ms = new MemoryStream();
+				await stream.CopyToAsync(ms);
+				var buffer = ms.ToArray();
+
+				uploadedImages.Add(new UploadedImage
+					{
+						FileName = file.Name,
+						ContentType = file.ContentType,
+						Content = buffer,
+						PreviewUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}"
+					});
+			}
+		}
+	}
+
+	private void RemoveImage(int index)
+	{
+		if (index >= 0 && index < uploadedImages.Count)
+		{
+			uploadedImages.RemoveAt(index);
+		}
+	}
+
+	// ================================================================================
+
+	#region create unit
+
+	protected async Task CreateUnit()
+	{
+		try
+		{
+			var content = new MultipartFormDataContent();
+
+			// Add text properties
+			content.Add(new StringContent(UnitDto.Title ?? ""), "Title");
+			content.Add(new StringContent(UnitDto.Description ?? ""), "Description");
+			content.Add(new StringContent(UnitDto.StreetName ?? ""), "StreetName");
+			content.Add(new StringContent(UnitDto.CompoundName ?? ""), "CompoundName");
+			content.Add(new StringContent(UnitDto.UnitArea.ToString()), "UnitArea");
+			content.Add(new StringContent(UnitDto.NumberOfBedrooms.ToString()), "NumberOfBedrooms");
+			content.Add(new StringContent(UnitDto.NumberOfBathrooms.ToString()), "NumberOfBathrooms");
+			content.Add(new StringContent(UnitDto.Price.ToString()), "Price");
+			content.Add(new StringContent(UnitDto.UserId.ToString()), "UserId");
+			content.Add(new StringContent(UnitDto.CategoryId.ToString()), "CategoryId");
+			content.Add(new StringContent(UnitDto.UnitTypeId.ToString()), "UnitTypeId");
+			content.Add(new StringContent(UnitDto.SaleTypeId.ToString()), "SaleTypeId");
+			content.Add(new StringContent(UnitDto.GovernorateId.ToString()), "GovernorateId");
+			content.Add(new StringContent(UnitDto.CityId.ToString()), "CityId");
+			content.Add(new StringContent(UnitDto.AreaId.ToString()), "AreaId");
+			content.Add(new StringContent(UnitDto.ResourceLink ?? ""), "ResourceLink");
+			content.Add(new StringContent(UnitDto.DeveloperPortfolio ?? ""), "DeveloperPortfolio");
+
+
+			// Add uploaded images
+			if (uploadedImages != null)
+			{
+				foreach (var image in uploadedImages)
+				{
+					var streamContent = new StreamContent(new MemoryStream(image.Content));
+					streamContent.Headers.ContentType = new MediaTypeHeaderValue(image.ContentType);
+					content.Add(streamContent, "Image", image.FileName);
+				}
+			}
+			
+			var response = await UnitService.AddUnitFormAsync(content);
+
+			if (response == null || !response.Status)
+			{
+				throw new Exception($"Failed to create Unit ");
+			}else
+			{
+				navigationManager.NavigateTo("/Units");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error Create Unit: {ex.Message}");
+		}
+		
+	}
+
+	#endregion
+
+	#region Categories
+	protected async Task GetCategoriesAsync()
+	{
+		try
+		{
+			var response = await CategoryService.GetCategoriesListAsync();
+			if (response?.Data != null)
+			{
+				Categories = response.Data;
+			}
+			else
+			{
+				Console.WriteLine("Error: No data found in response.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error loading categories: {ex.Message}");
+		}
+	}
+	#endregion
+
+	#region Types
+
+	protected async Task GetUnitsType()
+	{
+		try
+		{
+			var response = await TypesService.GetUnitTypesListAsync();
+			if (response?.Data != null)
+			{
+				UnitTypes = response.Data;
+			}
+			else
+			{
+				Console.WriteLine("Error: No data found in response.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error loading UnitTypes: {ex.Message}");
+		}
+	}
+
+	protected async Task GetSaleTypes()
+	{
+		try
+		{
+			var response = await TypesService.GetSaleTypesListAsync();
+			if (response?.Data != null)
+			{
+				SaleTypes = response.Data;
+			}
+			else
+			{
+				Console.WriteLine("Error: No data found in response.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error loading SaleTypes: {ex.Message}");
+		}
+	}
+
+	#endregion
+	
+
+	#region Address 
+
+	protected async Task GetGovernorate()
+	{
+		try
+		{
+			var response = await AddressService.GetGovernorateListAsync();
+
+			if (response?.Data != null)
+			{
+				Governorates = response.Data;
+			}
+			else
+			{
+				Console.WriteLine("Error: No data found in response.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error loading governorates: {ex.Message}");
+		}
+	}
+
+	protected async Task GetCities()
+	{
+		try
+		{
+			// Console.WriteLine($"Get Cites With With GovernorateId: {UnitDto.GovernorateId}"); // Debugging line
+			var response = await AddressService.GetCitiesInGovernorateListAsync(UnitDto.GovernorateId);
+
+			if (response?.Data != null)
+			{
+				Cities = response.Data;
+			}
+			else
+			{
+				Cities = new List<City>();
+				Console.WriteLine("Error: No data found in response.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error loading Cities: {ex.Message}");
+		}
+	}
+
+	protected async Task GetAreas()
+	{
+		try
+		{
+			var response = await AddressService.GetAreasInCityListAsync(UnitDto.CityId);
+
+			if (response?.Data != null)
+			{
+				Areas = response.Data;
+			}
+			else
+			{
+				Areas = new List<Area>();
+				Console.WriteLine("Error: No data found in response.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error loading Areas: {ex.Message}");
+		}
+	}
+
+	#endregion
+
+	#region Drag & drop and paste
+
+	void OnDragEnter(DragEventArgs e) => HoverClass = "hover";
+	void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			_filePasteModule = await JSRuntime
+				.InvokeAsync<IJSObjectReference>("import", "./js/filePaste.js");
+
+			_filePasteFunctionReference = await _filePasteModule
+			.InvokeAsync<IJSObjectReference>("initializeFilePaste", fileDropContainer, inputFile!.Element);
+		}
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		if (_filePasteFunctionReference is not null)
+		{
+			await _filePasteFunctionReference.InvokeVoidAsync("dispose");
+			await _filePasteFunctionReference.DisposeAsync();
+		}
+
+		if (_filePasteModule is not null)
+		{
+			await _filePasteModule.DisposeAsync();
+		}
+	}
+	#endregion
+
+}

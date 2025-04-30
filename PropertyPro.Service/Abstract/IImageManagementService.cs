@@ -10,7 +10,7 @@ namespace PropertyPro.Service.Abstract
     public interface IImageManagementService
     {
         Task<string> AddUserImageAsync(IFormFile file, string src);
-        Task<List<string>> AddImagesAsync(IFormFileCollection files, string src);
+        Task<List<string>> AddImagesAsync(List<IFormFile> files, string src);
         void DeleteImageAsync(string src);
 
     }

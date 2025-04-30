@@ -1,0 +1,94 @@
+﻿@page "/Types/User"
+
+<h3>User Types</h3>
+<a class="btn btn-primary" href="/Types/User/Create">New User Type</a>
+
+@if (userTypes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>User Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var userType in userTypes)
+            {
+                <tr>
+                    <td>@userType.Id</td>
+                    <td>@userType.Type</td>
+                    <td>
+                        <a class="btn btn-danger btn-sm" href="/Types/User/Delete/@userType.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@inject ITypesService TypesService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+@code {
+    private List<UserType> userTypes;
+    private string token;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the token from localStorage
+        token = await GetTokenAsync();
+
+        // If no token found, redirect to login
+        if (string.IsNullOrEmpty(token))
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        // Fetch User Types with token
+        await LoadUserTypesAsync();
+    }
+
+    private async Task<string> GetTokenAsync()
+    {
+        try
+        {
+            return await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting token: {ex.Message}");
+            return null;
+        }
+    }
+
+    private async Task LoadUserTypesAsync()
+    {
+        try
+        {
+
+            var response = await TypesService.GetUserTypesListAsync();
+
+            if (response?.Data != null)
+            {
+                userTypes = response.Data;
+            }
+            else
+            {
+                Console.WriteLine("Error: No data found in response.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading User Types: {ex.Message}");
+        }
+    }
+}

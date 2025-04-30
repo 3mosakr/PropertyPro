@@ -1,0 +1,94 @@
+﻿@page "/Types/Sale"
+
+<h3>Sale Types</h3>
+<a class="btn btn-primary" href="/Types/Sale/Create">New Sale Type</a>
+
+@if (saleTypes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Sale Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var type in saleTypes)
+            {
+                <tr>
+                    <td>@type.Id</td>
+                    <td>@type.Name</td>
+                    <td>
+                        <a class="btn btn-danger btn-sm" href="/Types/Sale/Delete/@type.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@inject ITypesService TypesService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+@code {
+    private List<SaleType> saleTypes;
+    private string? token;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the token from localStorage
+        token = await GetTokenAsync();
+
+        // If no token found, redirect to login
+        if (string.IsNullOrEmpty(token))
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        // Fetch Unit Types with token
+        await LoadSaleTypesAsync();
+    }
+
+    private async Task<string?> GetTokenAsync()
+    {
+        try
+        {
+            return await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting token: {ex.Message}");
+            return null;
+        }
+    }
+
+    private async Task LoadSaleTypesAsync()
+    {
+        try
+        {
+
+            var response = await TypesService.GetSaleTypesListAsync();
+
+            if (response?.Data != null)
+            {
+                saleTypes = response.Data;
+            }
+            else
+            {
+                Console.WriteLine("Error: No data found in response.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading Unit Types: {ex.Message}");
+        }
+    }
+}

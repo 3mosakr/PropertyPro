@@ -28,6 +28,7 @@ namespace PropertyPro.Service
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<ITypesService, TypesService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
 
             services.AddHttpContextAccessor();

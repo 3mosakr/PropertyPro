@@ -1,0 +1,24 @@
+﻿@page "/Types/Sale/Delete/{Id:int}"
+
+
+<h3>Delete</h3>
+
+<h1>Delete Sale Type</h1>
+<p>Are you sure you want to delete Sale Type with id @Id</p>
+<button class="btn btn-danger" @onclick="DeleteSaleType">Delete</button>
+<a class="btn btn-secondary" href="/Types/Sale">Cancel</a>
+
+
+@inject ITypesService TypesService
+@inject NavigationManager navigationManager
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+
+	protected async Task DeleteSaleType()
+	{
+		await TypesService.DeleteSaleTypeAsync(Id);
+		navigationManager.NavigateTo("/Types/Sale");
+	}
+}

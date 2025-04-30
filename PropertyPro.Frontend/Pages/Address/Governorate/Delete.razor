@@ -1,0 +1,20 @@
+﻿@page "/Address/Governorate/Delete/{id:int}"
+
+<h1>Delete Governorate</h1>
+<p>Are you sure you want to delete Governorate with id @Id</p>
+<button class="btn btn-danger" @onclick="DeleteGovernorate">Delete</button>
+<a class="btn btn-secondary" href="/Address/Governorate">Cancel</a>
+
+@inject IAddressService AddressService
+@inject NavigationManager navigationManager
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+
+	protected async Task DeleteGovernorate()
+	{
+		await AddressService.DeleteGovernorateAsync(Id);
+		navigationManager.NavigateTo("/Address/Governorate");
+	}
+}

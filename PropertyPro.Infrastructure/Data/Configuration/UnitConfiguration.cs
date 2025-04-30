@@ -18,12 +18,12 @@ namespace PropertyPro.Infrastructure.Data.Configuration
             
             builder.Property(u => u.Title)
                 .HasColumnType("NVARCHAR")
-                .HasMaxLength(200)
+                .HasMaxLength(255)
                 .IsRequired();
 
             builder.Property(u => u.Description)
                 .HasColumnType("NVARCHAR")
-                .HasMaxLength(2000)
+                .HasMaxLength(4000)
                 .IsRequired();
 
             //builder.Ignore(u => u.Address);

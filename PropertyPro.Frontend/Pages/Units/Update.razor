@@ -1,0 +1,241 @@
+﻿@page "/Units/Update/{Id:int}"
+
+
+
+
+<h3 class="text-xl font-bold mb-4">Update Unit</h3>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (updateModel is not null)
+{
+    <EditForm Model="updateModel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="row">
+            <div class="col-lg-8">
+                <h1 class="mb-5">Update Unit</h1>
+
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Title</label>
+                    <div class="col-md-8">
+                        <InputText @bind-Value="updateModel.Title" class="form-control" />
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Description</label>
+                    <div class="col-md-8">
+                        <textarea class="form-control" @bind="updateModel.Description" required></textarea>
+                    </div>
+                </div>
+
+                @* <div class="row mb-3"> *@
+                @*     <label class="col-md-4 col-form-label">Compound Name</label> *@
+                @*     <div class="col-md-8"> *@
+                @*         <input class="form-control" @bind="updateModel.CompoundName" required /> *@
+                @*     </div> *@
+                @* </div> *@
+
+                @* <div class="row mb-3"> *@
+                @*     <label class="col-md-4 col-form-label">Street Name</label> *@
+                @*     <div class="col-md-8"> *@
+                @*         <input class="form-control" @bind="updateModel.StreetName" required /> *@
+                @*     </div> *@
+                @* </div> *@
+
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Unit Address</label>
+                    <div class="col-md-8">
+                        <input class="form-control" @bind="updateModel.Address" required disabled />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Unit Area</label>
+                    <div class="col-md-8">
+                        <input type="number" class="form-control" @bind="updateModel.UnitArea" required />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Number of Bedrooms</label>
+                    <div class="col-md-8">
+                        <input type="number" class="form-control" @bind="updateModel.NumberOfBedrooms" required />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Number of Bathrooms</label>
+                    <div class="col-md-8">
+                        <input type="number" class="form-control" @bind="updateModel.NumberOfBathrooms" required />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Price</label>
+                    <div class="col-md-8">
+                        <input type="number" class="form-control" @bind="updateModel.Price" required />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Resourse Link</label>
+                    <div class="col-md-8">
+                        <input class="form-control" @bind="updateModel.ResourceLink" required />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Developer Portfolio</label>
+                    <div class="col-md-8">
+                        <input class="form-control" @bind="updateModel.DeveloperPortfolio" required />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Unit Images</label>
+                    <div class="col-md-8">
+                        <InputFile OnChange="HandleFileChange" multiple />
+                    </div>
+                </div>
+
+                @if (updateModel.ExistingImages?.Count > 0)
+                {
+                    <div class="row mb-3">
+                        <label class="col-md-4 col-form-label">Current Images</label>
+                        <div class="col-md-8">
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach (var imageUrl in updateModel.ExistingImages)
+                                {
+                                    var path = string.Concat($"{Const.BaseUrl}", imageUrl);
+                                    <img src="@path" alt="Image" style="width:100px;height:100px;object-fit:cover;border:1px solid #ccc;" />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="offset-md-4 col-md-4 d-grid">
+                        <button class="btn btn-primary" type="submit">Update</button>
+                    </div>
+                    <div class="col-md-4 d-grid">
+                        <a class="btn btn-secondary" href="/Units">Back</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </EditForm>
+
+    
+}
+
+
+@inject HttpClient Http
+@inject NavigationManager Nav
+@inject IAuthService AuthService
+@inject IUnitService UnitService
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private UpdateUnitDto? updateModel;
+    private bool isLoading = true;
+    private List<IBrowserFile> selectedFiles = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var response = await UnitService.GetUnitByIdAsync(Id);
+        if (response == null)
+        {
+            Console.WriteLine("Error: response is null for Get Unit By Id");
+            return;
+        }
+        else
+        {
+            
+            if (response?.Data is not null)
+            {
+                var data = response.Data[0];
+                updateModel = new UpdateUnitDto
+                    {
+
+                        Id = data.Id,
+                        Title = data.Title,
+                        Description = data.Description,
+                        // StreetName = data.Address, 
+                        // CompoundName = data.Address,
+						Address = data.Address,
+                        UnitArea = data.UnitArea,
+                        NumberOfBedrooms = data.NumberOfBedrooms,
+                        NumberOfBathrooms = data.NumberOfBathrooms,
+                        Price = data.Price,
+                        ResourceLink = data.ResourceLink,
+                        DeveloperPortfolio = data.DeveloperPortfolio,
+                        ExistingImages = data.Images // روابط الصور القديمة
+                    };
+            }
+
+        }
+        isLoading = false;
+
+    }
+
+    private void HandleFileChange(InputFileChangeEventArgs e)
+    {
+        selectedFiles = e.GetMultipleFiles().ToList();
+    }
+
+    // update method 
+    private async Task HandleValidSubmit()
+    {
+        var formContent = new MultipartFormDataContent();
+
+        formContent.Add(new StringContent(updateModel.Id.ToString()), "Id");
+        formContent.Add(new StringContent(updateModel.Title), "Title");
+        formContent.Add(new StringContent(updateModel.Description), "Description");
+        // formContent.Add(new StringContent(updateModel.StreetName ?? ""), "StreetName");
+        // formContent.Add(new StringContent(updateModel.CompoundName ?? ""), "CompoundName");
+        formContent.Add(new StringContent(updateModel.UnitArea.ToString()), "UnitArea");
+        formContent.Add(new StringContent(updateModel.NumberOfBedrooms.ToString()), "NumberOfBedrooms");
+        formContent.Add(new StringContent(updateModel.NumberOfBathrooms.ToString()), "NumberOfBathrooms");
+        formContent.Add(new StringContent(updateModel.Price.ToString()), "Price");
+        formContent.Add(new StringContent(updateModel.ResourceLink ?? ""), "ResourceLink");
+        formContent.Add(new StringContent(updateModel.DeveloperPortfolio ?? ""), "DeveloperPortfolio");
+
+        foreach (var file in selectedFiles)
+        {
+            var stream = file.OpenReadStream(5 * 1024 * 1024);
+            var streamContent = new StreamContent(stream);
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            formContent.Add(streamContent, "Image", file.Name);
+        }
+
+        try
+        {
+            var response = await UnitService.UpdateUnitAsync(formContent);
+
+            if (response != null)
+            {
+                Nav.NavigateTo("/Units"); 
+            }
+            else
+            {
+                Console.WriteLine($"Update failed ");
+            }
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error: {ex.Message}");
+		}
+    
+    }
+
+}

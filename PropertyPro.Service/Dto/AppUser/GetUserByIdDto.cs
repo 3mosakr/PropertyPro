@@ -16,6 +16,8 @@ namespace PropertyPro.Service.Dto.AppUser
 
         public string UserType { get; set; }
         public string? Photo { get; set; }
+        public DateTimeOffset? LockoutEnd { get; set; }
+
 
 
     }

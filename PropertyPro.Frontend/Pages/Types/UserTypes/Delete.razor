@@ -1,0 +1,24 @@
+﻿@page "/Types/User/Delete/{Id:int}"
+
+
+<h3>Delete</h3>
+
+<h1>Delete User Type</h1>
+<p>Are you sure you want to delete User Type with id @Id</p>
+<button class="btn btn-danger" @onclick="DeleteUserType">Delete</button>
+<a class="btn btn-secondary" href="/Types/User">Cancel</a>
+
+
+@inject ITypesService TypesService
+@inject NavigationManager navigationManager
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+
+	protected async Task DeleteUserType()
+	{
+		await TypesService.DeleteUserTypeAsync(Id);
+		navigationManager.NavigateTo("/Types/User");
+	}
+}

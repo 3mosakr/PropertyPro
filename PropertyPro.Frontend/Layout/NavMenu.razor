@@ -1,0 +1,119 @@
+﻿
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">PropertyPro.Frontend</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <!-- Address Section -->
+        <div class="nav-item px-3">
+            <a class="nav-link d-flex justify-content-between align-items-center" @onclick="ToggleAddressMenu">
+                <span><span class="bi-geo-alt-fill me-2"></span> Address</span>
+                <span class="@(isAddressExpanded ? "bi-chevron-up" : "bi-chevron-down")"></span>
+            </a>
+            @if (isAddressExpanded)
+            {
+                <div class="ms-3">
+                    <NavLink class="nav-link" href="Address/Governorate">
+                        <span class="bi-list-nested me-2" aria-hidden="true"></span> Governorate
+                    </NavLink>
+                    <NavLink class="nav-link" href="Address/City">
+                        <span class="bi-list-nested me-2" aria-hidden="true"></span> City
+                    </NavLink>
+                    <NavLink class="nav-link" href="Address/Area">
+                        <span class="bi-list-nested me-2" aria-hidden="true"></span> Area
+                    </NavLink>
+                </div>
+            }
+        </div>
+        <!-- Types Section -->
+        <div class="nav-item px-3">
+            <a class="nav-link d-flex justify-content-between align-items-center" @onclick="ToggleTypesMenu">
+                <span><span class="bi-ui-checks-grid me-2"></span> Types</span>
+                <span class="@(isTypesExpanded ? "bi-chevron-up" : "bi-chevron-down")"></span>
+            </a>
+            @if (isTypesExpanded)
+            {
+                <div class="ms-3">
+                    <NavLink class="nav-link" href="Types/Unit">
+                        <span class="bi-list-nested me-2" aria-hidden="true"></span> Unit Type
+                    </NavLink>
+                    <NavLink class="nav-link" href="Types/Sale">
+                        <span class="bi-list-nested me-2" aria-hidden="true"></span> Sale Type
+                    </NavLink>
+                    <NavLink class="nav-link" href="Types/User">
+                        <span class="bi-list-nested me-2" aria-hidden="true"></span> User Type
+                    </NavLink>
+                </div>
+            }
+        </div>
+        <!-- Properties: Category + Units -->
+        <div class="nav-item px-3">
+            <a class="nav-link d-flex justify-content-between align-items-center" @onclick="TogglePropertiesMenu">
+                <span><span class="bi-folder2-open me-2"></span> Properties</span>
+                <span class="@(isPropertiesExpanded ? "bi-chevron-up" : "bi-chevron-down")"></span>
+            </a>
+            @if (isPropertiesExpanded)
+            {
+                <div class="ms-3">
+                    <NavLink class="nav-link" href="Category">
+                        <span class="bi-tags me-2"></span> Category
+                    </NavLink>
+                </div>
+            }
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="units">
+                <span class="bi-building me-2" aria-hidden="true"></span> Units
+            </NavLink>
+        </div>
+        <!-- Users Section -->
+        <div class="nav-item px-3">
+            <a class="nav-link d-flex justify-content-between align-items-center" @onclick="ToggleUsersMenu">
+                <span><span class="bi-people-fill me-2"></span> Users</span>
+                <span class="@(isUsersExpanded ? "bi-chevron-up" : "bi-chevron-down")"></span>
+            </a>
+            @if (isUsersExpanded)
+            {
+                <div class="ms-3">
+                    <NavLink class="nav-link" href="Users">
+                        <span class="bi-person me-2"></span> Users
+                    </NavLink>
+                    <NavLink class="nav-link" href="Users/AddRole">
+                        <span class="bi-person-plus me-2"></span> Add Role
+                    </NavLink>
+                </div>
+            }
+        </div>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private bool isAddressExpanded = false;
+    private bool isTypesExpanded = false;
+    private bool isUsersExpanded = false;
+    private bool isPropertiesExpanded = false;
+
+    private void ToggleAddressMenu() => isAddressExpanded = !isAddressExpanded;
+    private void ToggleTypesMenu() => isTypesExpanded = !isTypesExpanded;
+    private void ToggleUsersMenu() => isUsersExpanded = !isUsersExpanded;
+    private void TogglePropertiesMenu() => isPropertiesExpanded = !isPropertiesExpanded;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

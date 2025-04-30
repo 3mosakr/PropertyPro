@@ -11,9 +11,12 @@ namespace PropertyPro.Service.Abstract
     public interface IUserService
     {
         public Task<ResponseModel<GetUserByIdDto>> GetUserByIdAsync(int id);
+        Task<ResponseModel<GetUserByIdDto>> GetUsersListAsync(int page, int pageSize);
         public Task<ResponseModel<UserPostsDto>> GetUserPostsByIdAsync(int id, int page, int pageSize);
         public Task<ResponseModel<UserFavoritsDto>> GetUserFavoritsByIdAsync(int id, int page, int pageSize);
-        
+
+        Task<ResponseModel<bool>> LockUnlockUserAsync(int id);
+
 
     }
 }

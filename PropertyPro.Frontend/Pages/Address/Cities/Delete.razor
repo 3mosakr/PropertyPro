@@ -1,0 +1,20 @@
+﻿@page "/Address/City/Delete/{id:int}"
+
+<h1>Delete City</h1>
+<p>Are you sure you want to delete City with id @Id</p>
+<button class="btn btn-danger" @onclick="DeleteCity">Delete</button>
+<a class="btn btn-secondary" href="/Address/City">Cancel</a>
+
+@inject IAddressService AddressService
+@inject NavigationManager navigationManager
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+
+	protected async Task DeleteCity()
+	{
+		await AddressService.DeleteCityAsync(Id);
+		navigationManager.NavigateTo("/Address/City");
+	}
+}

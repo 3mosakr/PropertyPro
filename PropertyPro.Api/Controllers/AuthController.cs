@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PropertyPro.Api.Base;
 using PropertyPro.Service.Abstract;
 using PropertyPro.Service.Dto.Auth;
 using PropertyPro.Service.Implementation;
+using System.Security.Claims;
 
 namespace PropertyPro.Api.Controllers
 {
@@ -11,10 +13,12 @@ namespace PropertyPro.Api.Controllers
     public class AuthController : AppControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger)
         {
             _authService = authService;
+            _logger = logger;
         }
 
         [HttpPost("register")]
@@ -31,36 +35,61 @@ namespace PropertyPro.Api.Controllers
             return NewResult(response);
         }
 
-        [HttpPost("logout")]
-        public Task<IActionResult> Logout()
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPasswordAsync(string email)
         {
-            throw new System.NotImplementedException();
+            var response = await _authService.ForgotPasswordAsync(email);
+            return Ok(response);
         }
 
-        //[HttpPost("refresh")]
-        //public Task<IActionResult> Refresh()
-        //{
-        //    throw new System.NotImplementedException();
-        //}
+        [Authorize(Roles = "Admin, User")]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordDto changePasswordDto)
+        {
+            // Get the username from the claims
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            _logger.LogInformation($"User {username} is accessing the ChangePasswordAsync endpoint.");
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError($"User {username} failed to change password. Error: {ModelState}");
+                return BadRequest(ModelState);
+            }
+            var result = await _authService.ChangePasswordAsync(changePasswordDto);
+            if (!string.IsNullOrEmpty(result))
+            {
+                _logger.LogError($"User {username} failed to change password. Error: {result}");
+                return BadRequest(result);
+            }
+            _logger.LogInformation($"User {username} successfully changed password.");
+            return Ok("Password changed successfully.");
+        }
 
-        //[HttpPost("forgot-password")]
-        //public Task<IActionResult> ForgotPassword()
-        //{
-        //    throw new System.NotImplementedException();
-        //}
+        [Authorize(Roles = "Admin")]
+        [HttpPost("add-role")]
+        public async Task<IActionResult> AddRoleAsync([FromBody] AddRoleModel model)
+        {
+            // Get the username from the claims
+            var username = User.FindFirstValue(ClaimTypes.Name) ?? "Unknown User";
+            _logger.LogInformation("User {Username} is attempting to add a role.", username);
 
-        //[HttpPost("reset-password")]
-        //public Task<IActionResult> ResetPassword()
-        //{
-        //    throw new System.NotImplementedException();
-        //}
+            if (!ModelState.IsValid)
+            {
+                var errors = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed for {Username}. Errors: {Errors}", username, errors);
+                return BadRequest(ModelState);
+            }
 
-        //[HttpPost("change-password")]
-        //public Task<IActionResult> ChangePassword()
-        //{
-        //    throw new System.NotImplementedException();
-        //}
+            var result = await _authService.AddRoleAsync(model);
 
+            if (!string.IsNullOrEmpty(result))
+            {
+                _logger.LogError($"User {username} failed to add role. Error: {result}");
+                return BadRequest(result);
+            }
+
+            _logger.LogInformation($"User {username} successfully added role.");
+            return Ok("Role added to user Successfully.");
+        }
 
 
     }

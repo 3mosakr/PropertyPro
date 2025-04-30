@@ -1,0 +1,78 @@
+﻿@page "/Users/AddRole"
+
+<h3>Add Role to User</h3>
+
+<EditForm Model="addUserRoleDto" OnValidSubmit="AddUserRole">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="row">
+        <div class="col-lg-8">
+
+            <div class="row mb-3">
+                <label class="col-md-4 col-form-label">User ID</label>
+                <div class="col-md-8">
+                    <InputNumber @bind-Value="addUserRoleDto.UserId" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-md-4 col-form-label">Role</label>
+                <div class="col-md-8">
+                    <InputSelect @bind-Value="addUserRoleDto.Role" class="form-control" required>
+                        <option selected hidden> -- Select Role -- </option>
+                        <option value="1">User</option>
+                        <option value="2">Admin</option>
+                    </InputSelect>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="offset-md-4 col-md-4 d-grid">
+                    <button class="btn btn-primary" type="submit">Add</button>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(resultMessage))
+            {
+                <div class="alert @(isSuccess ? "alert-success" : "alert-danger") mt-3">
+                    @resultMessage
+                </div>
+            }
+        </div>
+    </div>
+</EditForm>
+
+@inject NavigationManager navigationManager
+@inject IUserService UserService
+
+@code {
+    AddRoleModel addUserRoleDto = new AddRoleModel();
+    private string? resultMessage;
+    private bool isSuccess = false;
+
+    private async Task AddUserRole()
+    {
+        try
+        {
+            var response = await UserService.AddUserRoleAsync(addUserRoleDto);
+            if (!string.IsNullOrEmpty(response))
+            {
+                resultMessage = response;
+                isSuccess = true;
+                Console.WriteLine(response);
+            }
+            else
+            {
+                resultMessage = "No response from server.";
+                isSuccess = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            resultMessage = $"Error: {ex.Message}";
+            isSuccess = false;
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

@@ -26,6 +26,7 @@ namespace PropertyPro.Infrastructure.Reposatories.Implementation
         public IBaseRepository<UnitType> UnitTypes { get; private set; }
         public IBaseRepository<UserType> UserTypes { get; private set; }
         public IBaseRepository<SaleType> SaleTypes { get; private set; }
+        public IBaseRepository<Category> Categories { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -45,6 +46,7 @@ namespace PropertyPro.Infrastructure.Reposatories.Implementation
             UnitTypes = new BaseRepository<UnitType>(_context);
             UserTypes = new BaseRepository<UserType>(_context);
             SaleTypes = new BaseRepository<SaleType>(_context);
+            Categories = new BaseRepository<Category>(_context);
         }
 
         public async Task<int> Complete()

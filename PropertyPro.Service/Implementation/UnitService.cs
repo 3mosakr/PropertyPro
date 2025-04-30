@@ -2,6 +2,7 @@
 using Azure;
 using Azure.Core;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using PropertyPro.Data.Models;
 using PropertyPro.Infrastructure.Reposatories.Abstraction;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,13 +25,15 @@ namespace PropertyPro.Service.Implementation
         private readonly IMapper _mapper;
         private readonly IValidator<AddUnitDto> _validator;
         private readonly IImageManagementService _imageManagementService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UnitService(IUnitOfWork unitOfWork, IMapper mapper, IValidator<AddUnitDto> validator, IImageManagementService imageManagementService)
+        public UnitService(IUnitOfWork unitOfWork, IMapper mapper, IValidator<AddUnitDto> validator, IImageManagementService imageManagementService, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _validator = validator;
             _imageManagementService = imageManagementService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -121,10 +125,18 @@ namespace PropertyPro.Service.Implementation
 
             try
             {
+                
 
                 // validate input
                 // Mapping
                 var mapped = _mapper.Map<Unit>(addUnit);
+
+                if (mapped.UserId == 0)
+                {
+                    // user Id
+                    int userId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    mapped.UserId = userId;
+                }
 
                 // set Dateposted
                 mapped.DatePosted = DateTime.Now;
@@ -261,14 +273,14 @@ namespace PropertyPro.Service.Implementation
             }
         }
 
-        public async Task<ResponseModel<GetUnitsForListingDto>> GetUnitsPaginatedListAsync(int id)
+        public async Task<ResponseModel<GetUnitsForListingDto>> GetUnitsForUserPaginatedListAsync(int userId)
         {
             try
             {
                 // retrieve data 
                 var filterQuery = await _unitOfWork.Units.GetUnitsQuerableAsync();
                 // filter
-                filterQuery.Where(u => u.UserId == id);
+                filterQuery.Where(u => u.UserId == userId);
                 // mapping
                 var paginatedList = await _mapper
                 .ProjectTo<GetUnitsForListingDto>(filterQuery)

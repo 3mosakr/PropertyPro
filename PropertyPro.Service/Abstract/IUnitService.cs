@@ -23,6 +23,6 @@ namespace PropertyPro.Service.Abstract
         public Task<ResponseModel<UpdateUnitDto>> UpdateUnitAsync(UpdateUnitDto UpdatedUnit);
         public Task<ResponseModel<bool>> DeleteUnitByIdAsync(int id);
 
-        public Task<ResponseModel<GetUnitsForListingDto>> GetUnitsPaginatedListAsync(int id);
+        public Task<ResponseModel<GetUnitsForListingDto>> GetUnitsForUserPaginatedListAsync(int userId);
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertyPro.Api", "PropertyPro.Api\PropertyPro.Api.csproj", "{BD6DA415-FBB9-446F-8591-35685289CFDC}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertyPro.Infrastructure", "PropertyPro.Infrastructure\PropertyPro.Infrastructure.csproj", "{81529D6A-8513-4D85-B9F3-630C7D06EB3B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertyPro.Service", "PropertyPro.Service\PropertyPro.Service.csproj", "{19516279-EF98-4D17-9BCE-362F0681914D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertyPro.Frontend", "PropertyPro.Frontend\PropertyPro.Frontend.csproj", "{D274E1EA-8FA8-454F-BDF1-F64595A45CB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,8 +35,15 @@ Global
 		{19516279-EF98-4D17-9BCE-362F0681914D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19516279-EF98-4D17-9BCE-362F0681914D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19516279-EF98-4D17-9BCE-362F0681914D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D274E1EA-8FA8-454F-BDF1-F64595A45CB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D274E1EA-8FA8-454F-BDF1-F64595A45CB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D274E1EA-8FA8-454F-BDF1-F64595A45CB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D274E1EA-8FA8-454F-BDF1-F64595A45CB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EA84FB85-961A-43D6-9C3F-8A9D49773E67}
 	EndGlobalSection
 EndGlobal

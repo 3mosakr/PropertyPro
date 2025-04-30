@@ -18,6 +18,7 @@ namespace PropertyPro.Service.Implementation
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
+
         public AddressService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -44,6 +45,8 @@ namespace PropertyPro.Service.Implementation
 
         public async Task<ResponseModel<Governorate>> AddGovernorateAsync(string governorateName)
         {
+            if (string.IsNullOrEmpty(governorateName))
+                return new ResponseModel<Governorate>("Governorate name is required.", false);
             try
             {
                 // find if gov is exist before
@@ -91,6 +94,7 @@ namespace PropertyPro.Service.Implementation
                 var cities = await _unitOfWork.Cities.GetAllNoTrackingAsync();
                 // mapping
                 var mappingCities = _mapper.Map<List<CityDto>>(cities);
+                mappingCities = mappingCities.OrderBy(c => c.GovernorateId).ToList();
                 return new ResponseModel<CityDto>(mappingCities, "Get data Successfully.");
             }
             catch (Exception ex)
@@ -172,6 +176,7 @@ namespace PropertyPro.Service.Implementation
                 var areas = await _unitOfWork.Areas.GetAllNoTrackingAsync();
                 // mapping
                 var mappingAreas = _mapper.Map<List<AreaDto>>(areas);
+                mappingAreas = mappingAreas.OrderBy(c => c.CityId).ToList();
                 return new ResponseModel<AreaDto>(mappingAreas, "Get data Successfully.");
             }
             catch (Exception ex)

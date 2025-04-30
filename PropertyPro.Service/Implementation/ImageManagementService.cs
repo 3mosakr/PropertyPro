@@ -18,7 +18,7 @@ namespace PropertyPro.Service.Implementation
             _fileProvider = fileProvider;
         }
 
-        public async Task<List<string>> AddImagesAsync(IFormFileCollection files, string src)
+        public async Task<List<string>> AddImagesAsync(List<IFormFile> files, string src)
         {
             var SaveImageSrc = new List<string>();
 

@@ -1,0 +1,45 @@
+﻿@page "/Category/Create"
+
+<h3>Create Category</h3>
+
+<EditForm Model="this" OnValidSubmit="CreateCategory">
+
+	<div class="row">
+		<div class="col-lg-8">
+			<h1 class="mb-5">New Category</h1>
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Category</label>
+				<div class="col-md-8">
+					<input class="form-control" @bind="Category" required />
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="offset-md-4 col-md-4 d-grid">
+					<button class="btn btn-primary" type="submit">Create</button>
+				</div>
+				<div class="col-md-4 d-grid">
+					<a class="btn btn-secondary" href="/Category">Back</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</EditForm>
+
+
+@inject ICategotyService CategoryService
+@inject NavigationManager navigationManager
+@code {
+	public string Category { get; set; } = string.Empty;
+
+	private async Task CreateCategory()
+	{
+
+		var response = await CategoryService.AddCategoryAsync(Category);
+		if (response == null)
+		{
+			throw new Exception("Failed to create Category");
+		}
+		navigationManager.NavigateTo("/Category");
+	}
+}

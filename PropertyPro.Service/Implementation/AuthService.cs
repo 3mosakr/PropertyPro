@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -25,15 +26,17 @@ namespace PropertyPro.Service.Implementation
         private readonly IMapper _mapper;
         private readonly JWT _jwt;
         private readonly IImageManagementService _imageManagementService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public AuthService(UserManager<User> userManager, IMapper mapper, RoleManager<IdentityRole<int>> roleManager, JWT jwt, IImageManagementService imageManagementService)
+        public AuthService(UserManager<User> userManager, IMapper mapper, RoleManager<IdentityRole<int>> roleManager, JWT jwt, IImageManagementService imageManagementService, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _mapper = mapper;
             _roleManager = roleManager;
             _jwt = jwt;
             _imageManagementService = imageManagementService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ResponseModel<AuthModel>> RegisterAsync(RegisterDto model)
@@ -97,6 +100,17 @@ namespace PropertyPro.Service.Implementation
                 };
             }
 
+            if (user.LockoutEnd > DateTime.Now)
+            {
+                // user is blocked
+                return new ResponseModel<AuthModel>([authModel], "User is blocked!")
+                {
+                    StatusCode = System.Net.HttpStatusCode.Unauthorized,
+                    Status = false,
+                    Data = null
+                };
+            }
+
             var jwtSecurityToken = await CreateJwtToken(user);
             var rolesList = await _userManager.GetRolesAsync(user);
 
@@ -143,5 +157,49 @@ namespace PropertyPro.Service.Implementation
             return jwtSecurityToken;
         }
 
+        public async Task<string> AddRoleAsync(AddRoleModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId.ToString());
+            var role = await _roleManager.FindByIdAsync(model.Role.ToString());
+
+            if (user is null || role is null)
+                return "Invalid user ID or Role ID";
+
+            if (await _userManager.IsInRoleAsync(user, role!.Name!))
+                return "User already assigned to this role";
+            // add user to role
+            var result = await _userManager.AddToRoleAsync(user, role!.Name!);
+
+            return result.Succeeded ? string.Empty : "Something went wrong";
+        }
+
+        // change the signed in user password
+        public Task<string> ChangePasswordAsync(ChangePasswordDto model)
+        {
+            var username = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name);
+            var user = _userManager.Users.SingleOrDefault(u => u.UserName == username);
+            if (user is null)
+                return Task.FromResult("User not found");
+            var result = _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            if (result.Result.Succeeded)
+                return Task.FromResult(string.Empty);
+            return Task.FromResult("Something went wrong");
+
+        }
+
+        public async Task<string> ForgotPasswordAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+                return "User not found";
+            var token = _userManager.GeneratePasswordResetTokenAsync(user);
+            if (token.Result == null)
+                return "Something went wrong";
+            var result = _userManager.ResetPasswordAsync(user, token.Result, "NewPassword_123");
+            if (result.Result.Succeeded)
+                return string.Empty;
+            return "Something went wrong";
+
+        }
     }
 }

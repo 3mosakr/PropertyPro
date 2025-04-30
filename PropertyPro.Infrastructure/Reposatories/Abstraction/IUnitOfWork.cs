@@ -23,6 +23,7 @@ namespace PropertyPro.Infrastructure.Reposatories.Abstraction
         IBaseRepository<UserType> UserTypes { get; }
         IBaseRepository<UnitType> UnitTypes { get; }
         IBaseRepository<SaleType> SaleTypes { get; }
+        IBaseRepository<Category> Categories { get; }
 
 
 

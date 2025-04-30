@@ -1,0 +1,25 @@
+﻿@page "/Units/Delete/{Id:int}"
+
+
+<h3>Delete</h3>
+
+<h1>Delete Unit</h1>
+<p>Are you sure you want to delete Unit with id @Id</p>
+<button class="btn btn-danger" @onclick="DeleteUnit">Delete</button>
+<a class="btn btn-secondary" href="/Units">Cancel</a>
+
+
+
+@inject IUnitService UnitService
+@inject NavigationManager navigationManager
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+
+	protected async Task DeleteUnit()
+	{
+		await UnitService.DeleteUnitByIdAsync(Id);
+		navigationManager.NavigateTo("/Units");
+	}
+}

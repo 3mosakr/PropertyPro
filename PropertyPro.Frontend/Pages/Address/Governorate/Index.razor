@@ -1,0 +1,96 @@
+﻿@page "/Address/Governorate"
+
+<PageTitle>Governorates</PageTitle>
+
+<h1>Governorates</h1>
+<a class="btn btn-primary" href="/Address/Governorate/Create">New Governorate</a>
+
+@if (governorates == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var governorate in governorates)
+            {
+                <tr>
+                    <td>@governorate.Id</td>
+                    <td>@governorate.GovernorateName</td>
+                    <td>
+                        <a class="btn btn-danger btn-sm" href="/Address/Governorate/Delete/@governorate.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@inject IAddressService AddressService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+@code {
+    private List<Governorate> governorates;
+    private string token;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the token from localStorage
+        token = await GetTokenAsync();
+
+        // If no token found, redirect to login
+        if (string.IsNullOrEmpty(token))
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        // Fetch governorates with token
+        await LoadGovernoratesAsync();
+    }
+
+    private async Task<string> GetTokenAsync()
+    {
+        try
+        {
+            return await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting token: {ex.Message}");
+            return null;
+        }
+    }
+
+    private async Task LoadGovernoratesAsync()
+    {
+        try
+        {
+
+            var response = await AddressService.GetGovernorateListAsync();
+
+            if (response?.Data != null)
+            {
+                governorates = response.Data;
+            }
+            else
+            {
+                Console.WriteLine("Error: No data found in response.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading governorates: {ex.Message}");
+        }
+    }
+}

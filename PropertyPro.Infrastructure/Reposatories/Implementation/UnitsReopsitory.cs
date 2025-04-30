@@ -99,7 +99,7 @@ namespace PropertyPro.Infrastructure.Reposatories.Implementation
 
             if (!string.IsNullOrEmpty(search))
             {
-                querable = querable.Where(u => u.Address.Contains(search) || 
+                querable = querable.Where(u => u.Title.Contains(search) || u.Address.Contains(search) || 
                                                 u.User.FullName.Contains(search)
                                           );
             }

@@ -375,7 +375,7 @@ namespace PropertyPro.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(2000)
+                        .HasMaxLength(4000)
                         .HasColumnType("NVARCHAR");
 
                     b.Property<string>("DeveloperPortfolio")
@@ -407,7 +407,7 @@ namespace PropertyPro.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(200)
+                        .HasMaxLength(255)
                         .HasColumnType("NVARCHAR");
 
                     b.Property<int>("UnitArea")

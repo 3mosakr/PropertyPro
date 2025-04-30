@@ -1,0 +1,45 @@
+﻿@page "/Types/Sale/Create"
+
+<h3>Create Sale Type</h3>
+
+<EditForm Model="this" OnValidSubmit="CreateSaleType">
+
+	<div class="row">
+		<div class="col-lg-8">
+			<h1 class="mb-5">New Sale Type</h1>
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Type</label>
+				<div class="col-md-8">
+					<input class="form-control" @bind="Type" required />
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="offset-md-4 col-md-4 d-grid">
+					<button class="btn btn-primary" type="submit">Create</button>
+				</div>
+				<div class="col-md-4 d-grid">
+					<a class="btn btn-secondary" href="/Types/Sale">Back</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</EditForm>
+
+
+@inject ITypesService TypesService
+@inject NavigationManager navigationManager
+@code {
+	public string Type { get; set; } = string.Empty;
+
+	private async Task CreateSaleType()
+	{
+
+		var response = await TypesService.AddSaleTypeAsync(Type);
+		if (response == null)
+		{
+			throw new Exception("Failed to create Sale Type");
+		}
+		navigationManager.NavigateTo("/Types/Sale");
+	}
+}

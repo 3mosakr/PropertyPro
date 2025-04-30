@@ -1,0 +1,22 @@
+﻿﻿.file-drop-zone {
+    display: flex;
+    width: 100%;
+    border: 3px dotted #ff82a2;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.hover {
+    border-style: solid;
+    background-color: #d9ffed;
+}
+
+.image-container img {
+    width: 20%;
+    margin: 1rem;
+}
+
+::deep input[type=file] {
+    width: 100%;
+    padding: 20px;
+}

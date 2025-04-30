@@ -1,0 +1,146 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<style>
+
+    .card-text h2 {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    }
+
+    .card-text p {
+    font-size: 20px;
+    text-align: center;
+    }
+
+    .btn-light {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    }
+
+</style>
+
+<h1>Hello, world!</h1>
+
+Welcome to your Property Application.
+
+
+<div class="container mt-5">
+    <div class="row align-items-center">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <div class="card-text">
+                        <h2><i class="bi bi-building h1"></i> @unitCounts</h2>
+                        <p>All Units</p>
+                    </div>
+                    <a href="/Units" class="btn btn-light">More info <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <div class="card-text">
+                        <h2><i class="bi bi-people-fill h1"></i> @userCounts</h2>
+                        <p>User Registrations</p>
+                    </div>
+                    <a href="/Users" class="btn btn-light">More info <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@inject IUserService UserService
+@inject IUnitService UnitService
+
+@code {
+    private string? token; 
+    protected int userCounts = 0;
+	protected int unitCounts = 0;
+
+    protected override async Task OnInitializedAsync() 
+    {
+        token = await GetTokenAsync();
+
+        if (string.IsNullOrEmpty(token))
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+		await LoadUnitsAsync();
+        await LoadUsersAsync();
+    }
+
+    private async Task<string?> GetTokenAsync()
+    {
+        try
+        {
+            return await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting token: {ex.Message}");
+            return null;
+        }
+    }
+
+	
+
+    private async Task LoadUsersAsync()
+    {
+        try
+        {
+            var response = await UserService.GetUsersListAsync(1,1);
+
+            if (response != null)
+            {
+				userCounts = response.TotalCount;
+            }
+            else
+            {
+                Console.WriteLine("Error: No data found in response.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading units: {ex.Message}");
+        }
+    }
+    private async Task LoadUnitsAsync()
+    {
+        try
+        {
+            var response = await UnitService.GetUnitsPaginatedListFilteredAsync(page: 1,pageSize: 1);
+
+            if (response?.Data != null)
+            {
+				unitCounts = response.TotalCount;
+            }
+            else
+            {
+                Console.WriteLine("Error: No data found in response.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading units: {ex.Message}");
+        }
+    }
+} 
+

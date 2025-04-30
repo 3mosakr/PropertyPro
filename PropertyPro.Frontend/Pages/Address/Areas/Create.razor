@@ -1,0 +1,125 @@
+﻿@page "/Address/Area/Create"
+
+<h3>Create Area</h3>
+
+<EditForm Model="this" OnValidSubmit="CreateArea">
+
+	<div class="row">
+		<div class="col-lg-8">
+			<h1 class="mb-5">New Area</h1>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Governorate</label>
+				<div class="col-md-8">
+					<InputSelect class="form-control" @bind-Value="GovernorateId" @bind-Value:after="GetCities" >
+						<option selected hidden> -- select Governorate -- </option>
+						@foreach (var governorate in Governorates)
+						{
+							<option value="@governorate.Id">@governorate.GovernorateName</option>
+						}
+					</InputSelect>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">City</label>
+				<div class="col-md-8">
+					<InputSelect class="form-control" @bind-Value="AreaDto.CityId" required>
+						<option selected hidden> -- select City -- </option>
+						@foreach (var city in Cities)
+						{
+							<option value="@city.Id">@city.CityName</option>
+						}
+					</InputSelect>
+				</div>
+			</div>
+
+
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Area Name</label>
+				<div class="col-md-8">
+					<input class="form-control" @bind="AreaDto.AreaName" required />
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="offset-md-4 col-md-4 d-grid">
+					<button class="btn btn-primary" type="submit" >Create</button>
+				</div>
+				<div class="col-md-4 d-grid">
+					<a class="btn btn-secondary" href="/Address/Area">Back</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</EditForm>
+
+@inject IAddressService AddressService
+@inject NavigationManager navigationManager
+@code {
+
+	public AddAreaDto AreaDto { get; set; } = new AddAreaDto();
+
+	public List<Governorate> Governorates { get; set; } = new List<Governorate>();
+	public List<City> Cities { get; set; } = new List<City>();
+	public int GovernorateId { get; set; } 
+
+	protected async override Task OnInitializedAsync()
+	{
+		try
+		{
+			var response = await AddressService.GetGovernorateListAsync();
+
+			if (response?.Data != null)
+			{
+				Governorates = response.Data;
+			}
+			else
+			{
+				Console.WriteLine("Error: No data found in response.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error loading governorates: {ex.Message}");
+		}
+
+	}
+
+	private async Task GetCities()
+	{
+		try
+		{
+			Console.WriteLine($"Get Cites With With GovernorateId: {GovernorateId}"); // Debugging line
+			var response = await AddressService.GetCitiesInGovernorateListAsync(GovernorateId);
+
+			if (response?.Data != null)
+			{
+				Cities = response.Data;
+			}
+			else
+			{
+				Cities = new List<City>();
+				Console.WriteLine("Error: No data found in response.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error loading Cities: {ex.Message}");
+		}
+	}
+
+	private async Task CreateArea()
+	{
+
+		var response = await AddressService.AddAreaAsync(AreaDto);
+		if (response == null)
+		{
+			throw new Exception("Failed to create Area");
+		}
+		navigationManager.NavigateTo("/Address/Area");
+	}
+
+	
+}

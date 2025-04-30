@@ -43,6 +43,32 @@ namespace PropertyPro.Service.Implementation
 
         }
 
+
+        public async Task<ResponseModel<GetUserByIdDto>> GetUsersListAsync(int page = 1, int pageSize = 10)
+        {
+            var users = _userManager.Users
+                .AsNoTracking()
+                .Include(u => u.UserType)
+                .Select(u => new GetUserByIdDto
+                {
+                    Id = u.Id,
+                    FullName = u.FirstName + " " + u.LastName,
+                    Email = u.Email,
+                    Address = u.Address,
+                    UserType = u.UserType.Type,
+                    LockoutEnd = u.LockoutEnd,
+                    Photo = u.Photo
+                });
+
+            if (users is null)
+                return new ResponseModel<GetUserByIdDto>("", false);
+
+            // mapping
+            var paginatedList = await users
+                .ToPaginatedListAsync(page, pageSize);
+            return paginatedList;
+        }
+
         public async Task<ResponseModel<UserPostsDto>> GetUserPostsByIdAsync(int id, int page, int pageSize)
         {
             var posts = await _unitOfWork.Units.GetUnitsQuerableAsync();
@@ -73,5 +99,25 @@ namespace PropertyPro.Service.Implementation
             return paginatedList;
         }
 
+        public async Task<ResponseModel<bool>> LockUnlockUserAsync(int id)
+        {
+            var user = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.Id == id);
+            if (user is null)
+                return new ResponseModel<bool>("", false);
+            if (user.LockoutEnd != null && user.LockoutEnd > DateTime.UtcNow)
+            {
+                user.LockoutEnd = null;
+                await _userManager.UpdateAsync(user);
+                return new ResponseModel<bool>("User unlocked successfully", true);
+            }
+            else
+            {
+                user.LockoutEnd = DateTime.UtcNow.AddDays(10);
+                await _userManager.UpdateAsync(user);
+                return new ResponseModel<bool>("User locked successfully", true);
+            }
+
+        }
     }
 }
