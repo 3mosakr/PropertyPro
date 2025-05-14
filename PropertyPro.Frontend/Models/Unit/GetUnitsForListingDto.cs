@@ -17,7 +17,8 @@
 
         public string User { get; set; }
         public string UserPhone { get; set; }
-
+        // إضافة خاصية لتحديد إذا كانت الوحدة مميزة
+        public bool IsFeatured { get; set; }
         public List<string> Images { get; set; }
     }
 }

@@ -32,6 +32,8 @@ namespace PropertyPro.Service.Dto.Units
         public int RatedUsersCount {  get; set; }
         public string? ResourceLink { get; set; }
         public string? DeveloperPortfolio { get; set; }
+        // إضافة خاصية لتحديد إذا كانت الوحدة مميزة
+        public bool IsFeatured { get; set; }
         public List<string> Images { get; set; }
         public ICollection<CommentDetailsDto> Comments { get; set; }
 

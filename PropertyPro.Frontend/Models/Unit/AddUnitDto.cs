@@ -20,6 +20,8 @@ namespace PropertyPro.Frontend.Models.Unit
         public int CityId { get; set; }
         public int AreaId { get; set; }
         public string ResourceLink { get; set; }
+        // إضافة خاصية لتحديد إذا كانت الوحدة مميزة
+        public bool IsFeatured { get; set; }
         public string DeveloperPortfolio { get; set; }
 
         //public List<IBrowserFile> Image { get; set; }

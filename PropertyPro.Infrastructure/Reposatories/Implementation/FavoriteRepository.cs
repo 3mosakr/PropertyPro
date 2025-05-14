@@ -25,6 +25,8 @@ namespace PropertyPro.Infrastructure.Reposatories.Implementation
         #endregion
         
 
+        
+
         public async Task<Favorite> GetFavoriteByIdAsync(int memberId, int unitId)
         {
             return await _favorites.FindAsync(memberId, unitId);

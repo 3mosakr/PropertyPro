@@ -22,7 +22,11 @@ namespace PropertyPro.Api.Controllers
             _logger = logger;
         }
 
-        
+
+        /// <summary>
+        /// Get units with optional filters.
+        /// </summary>
+        /// <param name="hotDeals">Set to 1 to get only hot deals, 2 to ignore hot deals or 0 to ignore this filter.</param>
         [HttpGet]
         [Route("Get-All-Units")]
         public async Task<IActionResult> GetUnitsFilteredAsync([FromQuery] string search = "", int page = 1, int pageSize = 10,
@@ -31,12 +35,13 @@ namespace PropertyPro.Api.Controllers
                                                         int minPrice = 0,
                                                         int maxPrice = 0,
                                                         int NumOfRooms = 0,
-                                                        int NumOfBathrooms =0 )
+                                                        int NumOfBathrooms =0,
+                                                        int hotDeals = 0)
         {
             // Get the username from the claims
             var username = User.FindFirstValue(ClaimTypes.Name);
             _logger.LogInformation($"User {username} is accessing the GetUnitsFilteredAsync endpoint.");
-            var response = await _unitService.GetUnitsPaginatedListFilteredAsync(search, page, pageSize, unitType, userType, minPrice, maxPrice, NumOfRooms, NumOfBathrooms);
+            var response = await _unitService.GetUnitsPaginatedListFilteredAsync(search, page, pageSize, unitType, userType, minPrice, maxPrice, NumOfRooms, NumOfBathrooms, hotDeals);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 _logger.LogInformation($"User {username} successfully fetch units list.");
@@ -44,6 +49,29 @@ namespace PropertyPro.Api.Controllers
             else
             {
                 _logger.LogError($"User {username} failed to Fetch units list. Error: {response.Message}");
+            }
+            return NewResult(response);
+        }
+
+        [HttpGet]
+        [Route("Hot-Deals-Units")]
+        public async Task<IActionResult> GetUnitsFilteredAsync([FromQuery] string search = "", 
+                                                        int page = 1, 
+                                                        int pageSize = 10, 
+                                                        int minPrice = 0,
+                                                        int maxPrice = 0)
+        {
+            // Get the username from the claims
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            _logger.LogInformation($"User {username} is accessing the GetUnitsFilteredAsync endpoint.");
+            var response = await _unitService.GetUnitsPaginatedListHotDealsAsync(search, page, pageSize, minPrice, maxPrice);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                _logger.LogInformation($"User {username} successfully fetch hot deals units list.");
+            }
+            else
+            {
+                _logger.LogError($"User {username} failed to Fetch hot deals units list. Error: {response.Message}");
             }
             return NewResult(response);
         }
@@ -66,6 +94,7 @@ namespace PropertyPro.Api.Controllers
             }
             return NewResult(response);
         }
+
         [Authorize(Roles = "Admin, User")]
         [HttpPost]
         [Route("Add-Unit")]

@@ -16,6 +16,8 @@ namespace PropertyPro.Frontend.Models.Unit
         public int Price { get; set; }
         public string? ResourceLink { get; set; }
         public string? DeveloperPortfolio { get; set; }
+        // إضافة خاصية لتحديد إذا كانت الوحدة مميزة
+        public bool IsFeatured { get; set; }
         public List<IBrowserFile> Image { get; set; } = new(); // الصور الجديدة
         public List<string> ExistingImages { get; set; } = new(); // روابط الصور القديمة
     }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PropertyPro.Data.Models;
 using PropertyPro.Infrastructure.Reposatories.Abstraction;
 using PropertyPro.Infrastructure.Responses;
@@ -27,6 +28,37 @@ namespace PropertyPro.Service.Implementation
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+        }
+
+        public async Task<ResponseModel<FavoriteDto>> GetAllFavoritesForUserAsync(int userId)
+        {
+            if (userId == 0)
+            {
+                // user Id
+                int uId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                userId = uId;
+            }
+
+            var favorites = _unitOfWork.Favorites.GetFavoritsQuerableAsync().Result
+                .Where(f => f.UserId == userId);
+
+            var data = await _mapper.ProjectTo<FavoriteDto>(favorites).ToListAsync();
+            if (favorites == null || !favorites.Any())
+            {
+                return new ResponseModel<FavoriteDto>
+                {
+                    Status = false,
+                    StatusCode = System.Net.HttpStatusCode.NotFound,
+                    Message = "No favorites found for this user."
+                };
+            }
+            return new ResponseModel<FavoriteDto>
+            {
+                Status = true,
+                StatusCode = System.Net.HttpStatusCode.OK,
+                Message = "Favorites retrieved successfully.",
+                Data = data
+            };
         }
 
         public async Task<ResponseModel<Favorite>> AddFavoriteAsync(int unitId)
@@ -100,5 +132,7 @@ namespace PropertyPro.Service.Implementation
                 };
             }
         }
+
+        
     }
 }

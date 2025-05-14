@@ -19,6 +19,8 @@
 
         public string? ResourceLink { get; set; }
         public string? DeveloperPortfolio { get; set; }
+        // إضافة خاصية لتحديد إذا كانت الوحدة مميزة
+        public bool IsFeatured { get; set; }
         public List<string> Images { get; set; }
     }
 }

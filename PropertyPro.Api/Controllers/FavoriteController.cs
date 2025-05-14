@@ -22,6 +22,31 @@ namespace PropertyPro.Api.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Retrieve the favorite units list of user.
+        /// </summary>
+        /// <param name="userId"> Default Value 0 will get the favorite units list for the signed in user,
+        /// if you need spacific user enter his id.</param>
+        /// <returns> retrive list if found contains the unit Id and Unit Title</returns>
+        [HttpGet]
+        [Route("Get-Favorites/{userId:int}")]
+        public async Task<IActionResult> GetFavoritesAsync(int userId = 0)
+        {
+            // Get the username from the claims
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            _logger.LogInformation($"User {username} is trying to get favorites");
+            var response = await _favoriteService.GetAllFavoritesForUserAsync(userId);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                _logger.LogInformation($"User {username} successfully retrieved favorites");
+            }
+            else
+            {
+                _logger.LogWarning($"User {username} failed to retrieve favorites. Error: {response.Message}");
+            }
+            return NewResult(response);
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddFavoriteAsync(int unitId)
         {

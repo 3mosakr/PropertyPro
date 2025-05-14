@@ -66,7 +66,8 @@ namespace PropertyPro.Infrastructure.Reposatories.Implementation
                                                                             int minPrice,
                                                                             int maxPrice,
                                                                             int NumOfRooms,
-                                                                            int NumOfBathrooms)
+                                                                            int NumOfBathrooms,
+                                                                            int hotDeals)
         {
             // prepare Query and includes
             var querable = _units.AsNoTracking()
@@ -103,9 +104,44 @@ namespace PropertyPro.Infrastructure.Reposatories.Implementation
                                                 u.User.FullName.Contains(search)
                                           );
             }
+
+            // Hot Deals
+            if (hotDeals > 0)
+                if (hotDeals == 1)
+                    querable = querable.Where(u => u.IsFeatured == true);
+                else
+                    querable = querable.Where(u => u.IsFeatured == false);
+
             // Order data
             querable = querable.OrderByDescending(u => u.DatePosted);
             return querable;
+        }
+
+        public async Task<IQueryable<Unit>> GetUnitsQuerableHotDealsAsync(string search, int minPrice, int maxPrice)
+        {
+            var queriable = _units.AsNoTracking()
+                .Include(u => u.Category)
+                .Include(u => u.UnitType)
+                .Include(u => u.SaleType)
+                .Include(u => u.User)
+                .Include(u => u.Images)
+                .AsQueryable();
+            // Filtring
+            queriable = queriable.Where(u => u.IsFeatured == true);
+
+            if (minPrice > 0)
+                queriable = queriable.Where(u => u.Price >= minPrice);
+            if (maxPrice > 0 && maxPrice > minPrice)
+                queriable = queriable.Where(u => u.Price <= maxPrice);
+            if (!string.IsNullOrEmpty(search))
+            {
+                queriable = queriable.Where(u => u.Title.Contains(search) || u.Address.Contains(search) ||
+                                                u.User.FullName.Contains(search)
+                                          );
+            }
+            // Order data
+            queriable = queriable.OrderByDescending(u => u.DatePosted);
+            return queriable;
         }
 
 

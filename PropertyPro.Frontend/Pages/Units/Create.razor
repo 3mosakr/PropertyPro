@@ -168,7 +168,15 @@
 			</div>
 
 			<div class="row mb-3">
-				<label class="col-md-4 col-form-label">Unit Images (Max Size: 5 MB)</label>
+				<label class="col-md-4 col-form-label">Is Featured</label>
+				<div class="col-md-8 d-flex align-items-center">
+					<InputCheckbox @bind-Value="UnitDto.IsFeatured" class="form-check-input me-2" />
+					<label class="form-check-label">Mark this unit as Hot Deal</label>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label">Unit Images (Max Size: 5 MB, you can upload to 20 image at once)</label>
 				<div class="col-md-8 file-drop-zone @HoverClass"
 				@ref="fileDropContainer"
 				@ondragenter="OnDragEnter"
@@ -256,7 +264,7 @@
 
 	private async Task HandleFileSelected(InputFileChangeEventArgs e)
 	{
-		foreach (var file in e.GetMultipleFiles())
+		foreach (var file in e.GetMultipleFiles(20))
 		{
 			if (!uploadedImages.Any(f => f.FileName == file.Name))
 			{
@@ -312,6 +320,7 @@
 			content.Add(new StringContent(UnitDto.AreaId.ToString()), "AreaId");
 			content.Add(new StringContent(UnitDto.ResourceLink ?? ""), "ResourceLink");
 			content.Add(new StringContent(UnitDto.DeveloperPortfolio ?? ""), "DeveloperPortfolio");
+			content.Add(new StringContent(UnitDto.IsFeatured.ToString()), "IsFeatured");
 
 
 			// Add uploaded images

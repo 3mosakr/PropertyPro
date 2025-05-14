@@ -35,6 +35,9 @@ namespace PropertyPro.Data.Models
         public string ResourceLink { get; set; }
         public string DeveloperPortfolio { get; set; }
 
+        // إضافة خاصية لتحديد إذا كانت الوحدة مميزة
+        public bool IsFeatured { get; set; }
+
         public User User { get; set; } // posted by
         public Category Category { get; set; }
         public UnitType UnitType { get; set; }

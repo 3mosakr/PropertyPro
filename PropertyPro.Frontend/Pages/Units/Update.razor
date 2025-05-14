@@ -97,6 +97,14 @@ else if (updateModel is not null)
                 </div>
 
                 <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Is Featured</label>
+                    <div class="col-md-8 d-flex align-items-center">
+                        <InputCheckbox @bind-Value="updateModel.IsFeatured" class="form-check-input me-2" />
+                        <label class="form-check-label">Mark this unit as Hot Deal</label>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
                     <label class="col-md-4 col-form-label">Unit Images</label>
                     <div class="col-md-8">
                         <InputFile OnChange="HandleFileChange" multiple />
@@ -179,7 +187,9 @@ else if (updateModel is not null)
                         Price = data.Price,
                         ResourceLink = data.ResourceLink,
                         DeveloperPortfolio = data.DeveloperPortfolio,
+                        IsFeatured = data.IsFeatured,
                         ExistingImages = data.Images // روابط الصور القديمة
+                        
                     };
             }
 
@@ -209,6 +219,7 @@ else if (updateModel is not null)
         formContent.Add(new StringContent(updateModel.Price.ToString()), "Price");
         formContent.Add(new StringContent(updateModel.ResourceLink ?? ""), "ResourceLink");
         formContent.Add(new StringContent(updateModel.DeveloperPortfolio ?? ""), "DeveloperPortfolio");
+        formContent.Add(new StringContent(updateModel.IsFeatured.ToString()), "IsFeatured");
 
         foreach (var file in selectedFiles)
         {

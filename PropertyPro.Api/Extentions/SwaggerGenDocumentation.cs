@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace PropertyPro.Api.Extentions
 {
@@ -44,6 +45,10 @@ namespace PropertyPro.Api.Extentions
                        new List<string>()
                     }
                 });
+
+                // توثيق XML
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
         }
     }

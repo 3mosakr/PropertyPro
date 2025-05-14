@@ -16,7 +16,9 @@ namespace PropertyPro.Infrastructure.Reposatories.Abstraction
                                                                             int minPrice,
                                                                             int maxPrice,
                                                                             int NumOfRooms,
-                                                                            int NumOfBathrooms);
+                                                                            int NumOfBathrooms,
+                                                                            int hotDeals);
+        Task<IQueryable<Unit>> GetUnitsQuerableHotDealsAsync(string search, int minPrice, int maxPrice);
         Task<Unit> GetUnitByIdWithImagesAsync(int id);
     }
 }

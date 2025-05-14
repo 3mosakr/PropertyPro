@@ -13,8 +13,9 @@ namespace PropertyPro.Service.Abstract
 {
     public interface IFavoriteService 
     {
-        public Task<ResponseModel<Favorite>> AddFavoriteAsync(int unitId);
-        public Task<ResponseModel<Favorite>> DeleteFavoriteAsync(int unitId);
+        Task<ResponseModel<FavoriteDto>> GetAllFavoritesForUserAsync(int userId);
+        Task<ResponseModel<Favorite>> AddFavoriteAsync(int unitId);
+        Task<ResponseModel<Favorite>> DeleteFavoriteAsync(int unitId);
 
     }
 }

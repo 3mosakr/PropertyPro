@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace PropertyPro.Service.Dto.Favorites
 {
-    public class AddFavoriteDto
+    public class FavoriteDto
     {
-        public int UserId { get; set; } = 0;
         public int UnitId { get; set; }
+        public string UnitTitle { get; set; }
+
     }
 }

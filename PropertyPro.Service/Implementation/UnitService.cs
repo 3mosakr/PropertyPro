@@ -43,12 +43,13 @@ namespace PropertyPro.Service.Implementation
                                                                             int minPrice,
                                                                             int maxPrice,
                                                                             int NumOfRooms,
-                                                                            int NumOfBathrooms)
+                                                                            int NumOfBathrooms,
+                                                                            int hotDeals)
         {
             try
             {
                 // retrieve data filtered
-                var filterQuery = await _unitOfWork.Units.GetUnitsQuerableFilteredAsync(search, unitType, userType, minPrice, maxPrice, NumOfRooms, NumOfBathrooms);
+                var filterQuery = await _unitOfWork.Units.GetUnitsQuerableFilteredAsync(search, unitType, userType, minPrice, maxPrice, NumOfRooms, NumOfBathrooms, hotDeals);
                 // mapping
                 var paginatedList = await _mapper
                 .ProjectTo<GetUnitsForListingDto>(filterQuery)
@@ -69,7 +70,34 @@ namespace PropertyPro.Service.Implementation
                 };
             }
         }
-        
+
+        public async Task<ResponseModel<GetUnitsForListingDto>> GetUnitsPaginatedListHotDealsAsync(string search, int page, int pageSize, int minPrice, int maxPrice)
+        {
+            try
+            {
+                // retrieve data filtered
+                var filterQuery = await _unitOfWork.Units.GetUnitsQuerableHotDealsAsync(search, minPrice, maxPrice);
+                // mapping
+                var paginatedList = await _mapper
+                .ProjectTo<GetUnitsForListingDto>(filterQuery)
+                .ToPaginatedListAsync(page, pageSize);
+                // response
+                return paginatedList;
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<GetUnitsForListingDto>
+                {
+                    StatusCode = HttpStatusCode.BadGateway,
+                    Status = false,
+                    Message = ex.Message,
+                    Data = null,
+                    Errors = [ex.ToString()]
+                };
+            }
+
+        }
+
         public async Task<ResponseModel<GetUnitByIdDto>> GetUnitByIdAsync(int id)
         {   
             // Validate id
@@ -301,5 +329,7 @@ namespace PropertyPro.Service.Implementation
                 };
             }
         }
+
+        
     }
 }

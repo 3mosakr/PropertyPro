@@ -22,7 +22,9 @@ namespace PropertyPro.Service.Dto.Units
         public int CategoryId { get; set; }
         public int UnitTypeId { get; set; }
         public int SaleTypeId { get; set; }
-        
+        // إضافة خاصية لتحديد إذا كانت الوحدة مميزة
+        public bool IsFeatured { get; set; }
+
         public int GovernorateId { get; set; }
         public int CityId { get; set; }
         public int AreaId { get; set; }

@@ -17,7 +17,9 @@ namespace PropertyPro.Service.Abstract
                                                                             int minPrice,
                                                                             int maxPrice,
                                                                             int NumOfRooms,
-                                                                            int NumOfBathrooms);
+                                                                            int NumOfBathrooms,
+                                                                            int hotDeals);
+        public Task<ResponseModel<GetUnitsForListingDto>> GetUnitsPaginatedListHotDealsAsync(string search, int page, int pageSize, int minPrice, int maxPrice);
         public Task<ResponseModel<GetUnitByIdDto>> GetUnitByIdAsync(int id);
         public Task<ResponseModel<AddUnitDto>> AddUnitAsync(AddUnitDto addUnit);
         public Task<ResponseModel<UpdateUnitDto>> UpdateUnitAsync(UpdateUnitDto UpdatedUnit);
