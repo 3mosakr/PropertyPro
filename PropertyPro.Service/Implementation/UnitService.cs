@@ -37,14 +37,16 @@ namespace PropertyPro.Service.Implementation
         }
 
 
-        public async Task<ResponseModel<GetUnitsForListingDto>> GetUnitsPaginatedListFilteredAsync(string search, int page, int pageSize,
+        public async Task<ResponseModel<GetUnitsForListingDto>> GetUnitsPaginatedListFilteredAsync(string search, 
+                                                                            int page, int pageSize,
                                                                             int unitType,
                                                                             int userType,
                                                                             int minPrice,
                                                                             int maxPrice,
                                                                             int NumOfRooms,
                                                                             int NumOfBathrooms,
-                                                                            int hotDeals)
+                                                                            int hotDeals
+            )
         {
             try
             {
@@ -54,6 +56,26 @@ namespace PropertyPro.Service.Implementation
                 var paginatedList = await _mapper
                 .ProjectTo<GetUnitsForListingDto>(filterQuery)
                 .ToPaginatedListAsync(page, pageSize);
+
+                // التحقق إذا كان اليوزر مسجل دخول أم لا
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier));
+                // لو اليوزر عامل تسجيل دخول، أضيف له خاصية isFavorite
+                if (userId != 0)
+                {
+                    //  أول حاجة تستنى النتيجة من الدالة
+                    var favorites = await _unitOfWork.Favorites.GetAllNoTrackingAsync();
+
+                    //  بعدين تطبق LINQ
+                    var favoriteUnitIds = favorites
+                        .Where(f => f.UserId == userId)
+                        .Select(f => f.UnitId)
+                        .ToList();
+                    //  Mark IsFavorite = true if it's in the favorites
+                    foreach (var unit in paginatedList.Data)
+                    {
+                        unit.IsFavorite = favoriteUnitIds.Contains(unit.Id);
+                    }
+                }
                 // response
                 return paginatedList;
                 
@@ -81,6 +103,26 @@ namespace PropertyPro.Service.Implementation
                 var paginatedList = await _mapper
                 .ProjectTo<GetUnitsForListingDto>(filterQuery)
                 .ToPaginatedListAsync(page, pageSize);
+
+                // التحقق إذا كان اليوزر مسجل دخول أم لا
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier));
+                // لو اليوزر عامل تسجيل دخول، أضيف له خاصية isFavorite
+                if (userId != 0)
+                {
+                    // ✅ أول حاجة تستنى النتيجة من الدالة
+                    var favorites = await _unitOfWork.Favorites.GetAllNoTrackingAsync();
+
+                    // ✅ بعدين تطبق LINQ
+                    var favoriteUnitIds = favorites
+                        .Where(f => f.UserId == userId)
+                        .Select(f => f.UnitId)
+                        .ToList();
+                    // ✅ Mark IsFavorite = true if it's in the favorites
+                    foreach (var unit in paginatedList.Data)
+                    {
+                        unit.IsFavorite = favoriteUnitIds.Contains(unit.Id);
+                    }
+                }
                 // response
                 return paginatedList;
             }

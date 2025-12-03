@@ -26,6 +26,8 @@ namespace PropertyPro.Service.Dto.Units
         public string UserPhone { get; set; }
         // إضافة خاصية لتحديد إذا كانت الوحدة مميزة
         public bool IsFeatured { get; set; }
+        // بتوضح إذا كان اليوزر عامل "like" أو "favorite"
+        public bool IsFavorite { get; set; } = false;
 
         public List<string> Images { get; set; }
 

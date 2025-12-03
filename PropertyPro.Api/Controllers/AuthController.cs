@@ -24,21 +24,30 @@ namespace PropertyPro.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(RegisterDto registerDto)
         {
+            // logging the registration attempt
+            _logger.LogInformation($"User {registerDto.Email} is attempting to register.");
             var response = await _authService.RegisterAsync(registerDto);
+            _logger.LogInformation($"{response.Message}");
             return NewResult(response);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
+            // logging the login attempt
+            _logger.LogInformation($"User {loginDto.Email} is attempting to login.");
             var response = await _authService.LoginAsync(loginDto);
+            _logger.LogInformation($"{response.Message}");
             return NewResult(response);
         }
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPasswordAsync(string email)
         {
+            // logging the password reset attempt
+            _logger.LogInformation($"User {email} is attempting to reset password.");
             var response = await _authService.ForgotPasswordAsync(email);
+            _logger.LogInformation($"{response}");
             return Ok(response);
         }
 

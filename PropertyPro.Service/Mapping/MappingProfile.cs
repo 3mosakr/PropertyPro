@@ -100,7 +100,14 @@ namespace PropertyPro.Service.Mapping
         internal void FavoriteMapping()
         {
             CreateMap<Favorite, FavoriteDto>()
-                .ForMember(dest => dest.UnitTitle, opt => opt.MapFrom(src => src.Unit.Title))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Unit.Title))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Unit.Price))
+                .ForMember(dest => dest.NumberOfBedrooms, opt => opt.MapFrom(src => src.Unit.NumberOfBedrooms))
+                .ForMember(dest => dest.NumberOfBathrooms, opt => opt.MapFrom(src => src.Unit.NumberOfBathrooms))
+                .ForMember(dest => dest.UnitType, opt => opt.MapFrom(src => src.Unit.UnitType.TypeName))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Unit.Address))
+                .ForMember(dest => dest.IsFeatured, opt => opt.MapFrom(src => src.Unit.IsFeatured))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Unit.Images.Select(i => i.ImagePath)))
                 .ReverseMap();
             CreateMap<AddFavoriteDto, Favorite>();
             CreateMap<Favorite, UserFavoritsDto>()

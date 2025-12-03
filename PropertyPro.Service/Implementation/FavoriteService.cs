@@ -34,7 +34,7 @@ namespace PropertyPro.Service.Implementation
         {
             if (userId == 0)
             {
-                // user Id
+                // user Id 
                 int uId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 userId = uId;
             }

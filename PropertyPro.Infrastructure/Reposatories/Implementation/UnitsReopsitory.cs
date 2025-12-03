@@ -98,6 +98,7 @@ namespace PropertyPro.Infrastructure.Reposatories.Implementation
             else if (NumOfBathrooms >= 5)
                 querable = querable.Where(u => u.NumberOfBathrooms >= 5);
 
+            // Search
             if (!string.IsNullOrEmpty(search))
             {
                 querable = querable.Where(u => u.Title.Contains(search) || u.Address.Contains(search) || 
